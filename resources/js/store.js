@@ -1,3 +1,5 @@
+import { isLoggedIn, logout} from "./shared/utils/auth";
+
 export default {
     state: {
         lastSearch: {
@@ -15,7 +17,9 @@ export default {
             country: '',
             state: '',
             zip: '',
-        }
+        },
+        isLoggedIn: false,
+        user: {}
     },
     mutations: {
         setLastSearch(state, payload) {
@@ -32,6 +36,12 @@ export default {
         },
         setBasket(state, payload) {
             state.basket = payload;
+        },
+        setUser(state, payload) {
+            state.user = payload;
+        },
+        setLoggedIn(state, payload) {
+            state.isLoggedIn = payload;
         }
     },
     actions: {
@@ -88,6 +98,22 @@ export default {
         clearCustomer({commit, state}, payload) {
             commit("setCustomer", {});
             localStorage.setItem("customer", JSON.stringify(state.customer));
+        },
+        async loadUser({ commit, dispatch}) {
+            if (isLoggedIn()) {
+                try {
+                    let user = (await axios.get("/user")).data; // need to encapsulate otherwise you'll be reading the promise result and not the api result data
+                    commit("setUser", user);
+                    commit("setLoggedIn", true);
+                } catch(error) {
+                    dispatch("logout");
+                }
+            }
+        },
+        logout({ commit}) {
+            commit("setUser", user);
+            commit("setLoggedIn", false);
+            logout();
         }
 	},
     getters: {

@@ -2003,6 +2003,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _shared_mixins_validationErrors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/mixins/validationErrors */ "./resources/js/shared/mixins/validationErrors.js");
+/* harmony import */ var _shared_utils_auth__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./../shared/utils/auth */ "./resources/js/shared/utils/auth.js");
+/* harmony import */ var _shared_utils_auth__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_shared_utils_auth__WEBPACK_IMPORTED_MODULE_2__);
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -2068,7 +2070,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
- //import { logIn } from "./../shared/utils/auth";
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   mixins: [_shared_mixins_validationErrors__WEBPACK_IMPORTED_MODULE_1__["default"]],
@@ -2102,10 +2104,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 });
 
               case 7:
-                _context.next = 9;
-                return axios.get("/user");
+                Object(_shared_utils_auth__WEBPACK_IMPORTED_MODULE_2__["login"])();
 
-              case 9:
+                _this.$store.dispatch("loadUser"); //this.$router.push({ name: "home" });
+
+
                 _context.next = 14;
                 break;
 
@@ -86670,10 +86673,14 @@ var app = new vue__WEBPACK_IMPORTED_MODULE_1___default.a({
             case 0:
               _this.$store.dispatch('loadStoredState');
 
-              _context.next = 3;
-              return axios__WEBPACK_IMPORTED_MODULE_15___default.a.get('/sanctum/csrf-cookie');
+              _this.$store.dispatch('loadUser'); // await axios.post('/login', {
+              //     email: 'ebaumbach@example.net',
+              //     password: 'password'
+              // });
+              // await axios.get('/user');
 
-            case 3:
+
+            case 2:
             case "end":
               return _context.stop();
           }
@@ -88059,6 +88066,33 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/shared/utils/auth.js":
+/*!*******************************************!*\
+  !*** ./resources/js/shared/utils/auth.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+var isLoggedIn = function isLoggedIn() {
+  return localStorqage.getItem("isLoggedIn") == true;
+};
+
+var login = function login() {
+  localStorage.setItem("isLoggedIn", true);
+};
+
+var logout = function logout() {
+  localStorage.setItem("isLoggedIn", false);
+};
+
+module.exports = {
+  isLoggedIn: isLoggedIn,
+  login: login,
+  logout: logout
+};
+
+/***/ }),
+
 /***/ "./resources/js/shared/utils/response.js":
 /*!***********************************************!*\
   !*** ./resources/js/shared/utils/response.js ***!
@@ -88092,6 +88126,17 @@ var isErrorWithResponseAndStatus = function isErrorWithResponseAndStatus(err) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _shared_utils_auth__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./shared/utils/auth */ "./resources/js/shared/utils/auth.js");
+/* harmony import */ var _shared_utils_auth__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_shared_utils_auth__WEBPACK_IMPORTED_MODULE_1__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   state: {
     lastSearch: {
@@ -88109,7 +88154,9 @@ __webpack_require__.r(__webpack_exports__);
       country: '',
       state: '',
       zip: ''
-    }
+    },
+    isLoggedIn: false,
+    user: {}
   },
   mutations: {
     setLastSearch: function setLastSearch(state, payload) {
@@ -88128,6 +88175,12 @@ __webpack_require__.r(__webpack_exports__);
     },
     setBasket: function setBasket(state, payload) {
       state.basket = payload;
+    },
+    setUser: function setUser(state, payload) {
+      state.user = payload;
+    },
+    setLoggedIn: function setLoggedIn(state, payload) {
+      state.isLoggedIn = payload;
     }
   },
   actions: {
@@ -88198,6 +88251,53 @@ __webpack_require__.r(__webpack_exports__);
           state = _ref5.state;
       commit("setCustomer", {});
       localStorage.setItem("customer", JSON.stringify(state.customer));
+    },
+    loadUser: function loadUser(_ref6) {
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        var commit, dispatch, _user;
+
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                commit = _ref6.commit, dispatch = _ref6.dispatch;
+
+                if (!Object(_shared_utils_auth__WEBPACK_IMPORTED_MODULE_1__["isLoggedIn"])()) {
+                  _context.next = 13;
+                  break;
+                }
+
+                _context.prev = 2;
+                _context.next = 5;
+                return axios.get("/user");
+
+              case 5:
+                _user = _context.sent.data;
+                // need to encapsulate otherwise you'll be reading the promise result and not the api result data
+                commit("setUser", _user);
+                commit("setLoggedIn", true);
+                _context.next = 13;
+                break;
+
+              case 10:
+                _context.prev = 10;
+                _context.t0 = _context["catch"](2);
+                dispatch("logout");
+
+              case 13:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, null, [[2, 10]]);
+      }))();
+    },
+    logout: function logout(_ref7) {
+      var commit = _ref7.commit;
+      commit("setUser", user);
+      commit("setLoggedIn", false);
+
+      Object(_shared_utils_auth__WEBPACK_IMPORTED_MODULE_1__["logout"])();
     }
   },
   getters: {
