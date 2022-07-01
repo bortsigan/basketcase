@@ -33,7 +33,16 @@ Vue.component("v-errors", ValidationErrors);
 Vue.filter("fromNow", value => moment(value).fromNow());
 
 const store = new Vuex.Store(storeDef);
+window.axios.interceptors.response.use(
+    response => response,
+    error => {
+        if (401 === error.response.status) {
+            store.dispatch("logout"); // from vuex
+        }
 
+        return Promise.reject(error);
+    }
+);
 const app = new Vue({
     el: '#app',
     router: router,
@@ -44,12 +53,5 @@ const app = new Vue({
     async beforeCreate() {
         this.$store.dispatch('loadStoredState');
         this.$store.dispatch('loadUser');
-        
-        // await axios.post('/login', {
-        //     email: 'ebaumbach@example.net',
-        //     password: 'password'
-        // });
-
-        // await axios.get('/user');
     }
 });

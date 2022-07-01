@@ -6,8 +6,6 @@
         {{ testString }}
         
         !-->
-
-    <div class="font-weight-bold">Hljasdlfjlkas</div>
     <div class="d-flex justify-content-between mb-2">
       <span></span>
       <span>

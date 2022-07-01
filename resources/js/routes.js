@@ -5,6 +5,7 @@ import Review from "./review/Review";
 import Basket from "./basket/Basket";
 import BasketCheckout from "./basket/BasketCheckout";
 import Login from "./auth/Login";
+import Register from "./auth/Register";
 
 const routes = [
 	{
@@ -33,9 +34,14 @@ const routes = [
 		name: "basket-checkout"
 	},
 	{
-		path: "/auth/login",
+		path: "/login",
 		component: Login,
-		name: "auth-login"
+		name: "login"
+	},
+	{
+		path: "/register",
+		component: Register,
+		name: "register"
 	}
 ];
 

@@ -1,51 +1,59 @@
 <template>
   <div>
-    <div
-      class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm"
-    >
+    <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
       <h5 class="my-0 mr-md-auto font-weight-normal">
         <strong>
           <router-link :to="{ name: 'bookables' }">VnB</router-link>
         </strong>
       </h5>
-      <nav class="my-2 my-md-0 mr-md-3">
-        <router-link
-          exact-active-class="active"
-          v-bind:class="`p-2 text-dark`"
-          v-bind:to="{ name: 'bookables' }"
-          >Bookables</router-link
-        >
-        <router-link
-          active-class="active"
-          v-bind:class="`p-2 text-dark`"
-          v-bind:to="{ name: 'example', params: { id: 1 } }"
-          >Example</router-link
-        >
-        <router-link class="btn nav-button" :to="{ name: 'basket' }">
-          <i class="fas fa-shopping-cart"></i>
-          <span v-if="itemsInBasket" class="badge badge-secondary">{{
-            itemsInBasket
-          }}</span>
-        </router-link>
-      </nav>
 
-      <a class="btn btn-outline-primary" href="#">Sign up</a>
-    </div>
+      <!-- Left Side Of Navbar -->
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <router-link class="nav-link" :to="{ name: 'basket' }">
+            <i class="fas fa-shopping-cart"></i>
+            <span v-if="itemsInBasket" class="badge badge-secondary">{{
+              itemsInBasket
+            }}</span>
+          </router-link>
+        </li>
+
+        <li class="nav-item" v-if="isLoggedIn">
+          <router-link :to="{ name: 'bookables' }" class="nav-link"
+            >Bookables</router-link
+          >
+        </li>
+
+        <li class="nav-item" v-if="!isLoggedIn">
+          <router-link :to="{ name: 'register' }" class="nav-link">Register</router-link>
+        </li>
+
+        <li class="nav-item" v-if="!isLoggedIn">
+          <router-link :to="{ name: 'login' }" class="nav-link">Login</router-link>
+        </li>
+
+        <li class="nav-item" v-if="isLoggedIn">
+          <a class="nav-link" href="#" @click.prevent="logout">Logout</a>
+        </li>
+      </ul>
+    </nav>
 
     <div class="container mt-4 mb-4 pr-4 pl-4">
       <!-- render views !-->
-      <div class="card">
+      <div class="card" v-if="isLoggedIn">
         <div class="card-header">Header</div>
         <div class="card-body">
           <router-view></router-view>
         </div>
       </div>
+      <router-view v-else></router-view>
     </div>
   </div>
 </template>
 
 <script>
 import { mapState, mapGetters } from "vuex";
+import { isLoggedIn } from "./shared/utils/auth";
 
 export default {
   data() {
@@ -57,11 +65,27 @@ export default {
     ...mapState({
       //lastSearchComputed: state => state.lastSearchComputed
       lastSearchComputed: "lastSearch",
+      isLoggedIn: "isLoggedIn",
     }),
     ...mapGetters({
+      user: "user",
       itemsInBasket: "itemsInBasket",
       ///customer: "customer",
     }),
+  },
+  methods: {
+    async logout() {
+      try {
+        axios.post("/logout");
+        this.$store.dispatch("logout");
+        this.$router.push({ name: "login" });
+      } catch (error) {
+        this.$store.dispatch("logout");
+      }
+    },
+  },
+  created() {
+    console.log(this.isUserLoggedIn);
   },
 };
 </script>

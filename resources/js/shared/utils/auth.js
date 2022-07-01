@@ -1,5 +1,5 @@
 let isLoggedIn = () => {
-    return localStorqage.getItem("isLoggedIn") == true;
+    return localStorage.getItem("isLoggedIn") == 'true';
 }
 
 let login = () => {

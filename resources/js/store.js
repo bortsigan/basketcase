@@ -71,6 +71,8 @@ export default {
             if (customer) {
                 context.commit('setCustomer', JSON.parse(customer));
             }
+
+            context.commit("setLoggedIn", isLoggedIn());
         },
         setCustomer({commit, state}, payload) {
             commit('setCustomer', payload);
@@ -110,8 +112,8 @@ export default {
                 }
             }
         },
-        logout({ commit}) {
-            commit("setUser", user);
+        logout({ commit }) {
+            commit("setUser", {});
             commit("setLoggedIn", false);
             logout();
         }
@@ -124,6 +126,7 @@ export default {
                     (result, item) => result || item.bookable.id == id, 
                     false
                 );
-        }
+        },
+        user: (state) => state.user
     }
 }

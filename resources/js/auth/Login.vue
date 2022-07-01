@@ -74,6 +74,7 @@ export default {
     async login() {
       this.loading = true;
       this.errors = null;
+
       try {
         await axios.get("/sanctum/csrf-cookie");
         await axios.post("/login", {
@@ -83,7 +84,7 @@ export default {
 
         login();
         this.$store.dispatch("loadUser");
-        //this.$router.push({ name: "home" });
+        this.$router.push({ name: "bookables" });
       } catch (error) {
         this.errors = error.response && error.response.data.errors;
       }
