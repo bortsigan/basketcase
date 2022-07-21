@@ -51,10 +51,10 @@ export default {
          * ex.
          * this.$yourVar.dispatch('youractions', payloadOrParamValues)
          */
-		setLastSearch(context, payload) {
-			context.commit('setLastSearch', payload);
-			localStorage.setItem('lastSearch', JSON.stringify(payload)); // save it as JSON
-		},
+	setLastSearch(context, payload) {
+		context.commit('setLastSearch', payload);
+		localStorage.setItem('lastSearch', JSON.stringify(payload)); // save it as JSON
+	},
         loadStoredState(context) {
             const lastSearch = localStorage.getItem('lastSearch');
             const basket = localStorage.getItem('basket');
