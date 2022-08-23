@@ -83,9 +83,6 @@ export default {
         this.$store.dispatch("logout");
       }
     },
-  },
-  created() {
-    console.log(this.isUserLoggedIn);
-  },
+  }
 };
 </script>

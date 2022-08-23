@@ -2036,9 +2036,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }, _callee);
       }))();
     }
-  },
-  created: function created() {
-    console.log(this.isUserLoggedIn);
   }
 });
 
@@ -3577,6 +3574,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -3593,7 +3593,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       pages: {
         prev: null,
         next: null
-      }
+      },
+      isLoading: false
     }; // return {
     //     bookable1: null,
     //     bookable2: null
@@ -3631,8 +3632,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   _this.bookables = response.data.data;
                   _this.pages.prev = links.prev ? links.prev && _this.search ? "".concat(links.prev, "&search=").concat(_this.search) : links.prev : "";
                   _this.pages.next = links.next ? links.next && _this.search ? "".concat(links.next, "&search=").concat(_this.search) : links.next : "";
+                  console.log(_this.loading);
                 })["catch"](function (error) {
                   console.error("Something went wrong in getting bookables data.");
+                })["finally"](function () {
+                  _this.loading = false;
+                  console.warn(_this.loading);
                 });
 
               case 4:
@@ -63358,10 +63363,7 @@ var render = function() {
             _vm._v("\n        Forgotten password?\n        "),
             _c(
               "router-link",
-              {
-                staticClass: "font-weight-bold",
-                attrs: { to: { name: "home" } }
-              },
+              { staticClass: "font-weight-bold", attrs: { to: "/" } },
               [_vm._v("Reset password")]
             )
           ],
@@ -64959,35 +64961,37 @@ var render = function() {
         ])
       ]),
       _vm._v(" "),
-      _vm._l(_vm.rows, function(row) {
-        return _c(
-          "div",
-          { key: "row" + row, staticClass: "row mb-4" },
-          [
-            _vm._l(_vm.bookablesInRow(row), function(bookable, column) {
-              return _c(
-                "div",
-                { key: "row" + row + column, staticClass: "col" },
-                [
-                  _c(
-                    "bookable-list-item",
-                    _vm._b({}, "bookable-list-item", bookable, false)
+      _vm.loading
+        ? _c("preloader")
+        : _vm._l(_vm.rows, function(row) {
+            return _c(
+              "div",
+              { key: "row" + row, staticClass: "row mb-4" },
+              [
+                _vm._l(_vm.bookablesInRow(row), function(bookable, column) {
+                  return _c(
+                    "div",
+                    { key: "row" + row + column, staticClass: "col" },
+                    [
+                      _c(
+                        "bookable-list-item",
+                        _vm._b({}, "bookable-list-item", bookable, false)
+                      )
+                    ],
+                    1
                   )
-                ],
-                1
-              )
-            }),
-            _vm._v(" "),
-            _vm._l(_vm.placeholdersInRow(row), function(p) {
-              return _c("div", {
-                key: "placeholder" + row + p,
-                staticClass: "col"
-              })
-            })
-          ],
-          2
-        )
-      }),
+                }),
+                _vm._v(" "),
+                _vm._l(_vm.placeholdersInRow(row), function(p) {
+                  return _c("div", {
+                    key: "placeholder" + row + p,
+                    staticClass: "col"
+                  })
+                })
+              ],
+              2
+            )
+          }),
       _vm._v(" "),
       _c("div", { staticClass: "row mb-2" }, [
         _c("div", { staticClass: "col-md-6" }, [
@@ -88722,9 +88726,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       zip: ''
     },
     isLoggedIn: false,
-    user: {}
+    user: {},
+    isLoading: false
   },
   mutations: {
+    setIsLoading: function setIsLoading(state, payload) {
+      state.isLoading = payload;
+    },
     setLastSearch: function setLastSearch(state, payload) {
       state.lastSearch = payload;
     },
@@ -88822,49 +88830,59 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     loadUser: function loadUser(_ref6) {
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        var commit, dispatch, user;
+        var commit, dispatch;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
                 commit = _ref6.commit, dispatch = _ref6.dispatch;
+                commit('setIsLoading', true);
 
                 if (!Object(_shared_utils_auth__WEBPACK_IMPORTED_MODULE_1__["isLoggedIn"])()) {
-                  _context.next = 13;
+                  _context.next = 14;
                   break;
                 }
 
-                _context.prev = 2;
-                _context.next = 5;
-                return axios.get("/user");
+                _context.prev = 3;
+                _context.next = 6;
+                return axios.get("/user").then(function (response) {
+                  commit("setUser", user);
+                  commit("setLoggedIn", true);
+                })["catch"](function (error) {
+                  dispatch("logout");
+                });
 
-              case 5:
-                user = _context.sent.data;
-                // need to encapsulate otherwise you'll be reading the promise result and not the api result data
-                commit("setUser", user);
-                commit("setLoggedIn", true);
-                _context.next = 13;
+              case 6:
+                _context.next = 11;
                 break;
 
-              case 10:
-                _context.prev = 10;
-                _context.t0 = _context["catch"](2);
+              case 8:
+                _context.prev = 8;
+                _context.t0 = _context["catch"](3);
                 dispatch("logout");
 
-              case 13:
+              case 11:
+                _context.prev = 11;
+                commit('setIsLoading', false);
+                return _context.finish(11);
+
+              case 14:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, null, [[2, 10]]);
+        }, _callee, null, [[3, 8, 11, 14]]);
       }))();
     },
     logout: function logout(_ref7) {
       var commit = _ref7.commit;
+      commit('setIsLoading', true);
       commit("setUser", {});
       commit("setLoggedIn", false);
 
       Object(_shared_utils_auth__WEBPACK_IMPORTED_MODULE_1__["logout"])();
+
+      commit('setIsLoading', false);
     }
   },
   getters: {
@@ -88909,8 +88927,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /home/bortsigan/Desktop/Projects/practice/laravue/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /home/bortsigan/Desktop/Projects/practice/laravue/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /Users/bortsigan/Desktop/Projects/practice/basketcase/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /Users/bortsigan/Desktop/Projects/practice/basketcase/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

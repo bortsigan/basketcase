@@ -19,9 +19,13 @@ export default {
             zip: '',
         },
         isLoggedIn: false,
-        user: {}
+        user: {},
+        isLoading: false
     },
     mutations: {
+        setIsLoading(state, payload) {
+            state.isLoading = payload;
+        },
         setLastSearch(state, payload) {
             state.lastSearch = payload;
         },
@@ -51,10 +55,10 @@ export default {
          * ex.
          * this.$yourVar.dispatch('youractions', payloadOrParamValues)
          */
-	setLastSearch(context, payload) {
-		context.commit('setLastSearch', payload);
-		localStorage.setItem('lastSearch', JSON.stringify(payload)); // save it as JSON
-	},
+    	setLastSearch(context, payload) {
+    		context.commit('setLastSearch', payload);
+    		localStorage.setItem('lastSearch', JSON.stringify(payload)); // save it as JSON
+    	},
         loadStoredState(context) {
             const lastSearch = localStorage.getItem('lastSearch');
             const basket = localStorage.getItem('basket');
@@ -102,20 +106,35 @@ export default {
             localStorage.setItem("customer", JSON.stringify(state.customer));
         },
         async loadUser({ commit, dispatch}) {
+            commit('setIsLoading', true);
             if (isLoggedIn()) {
                 try {
-                    let user = (await axios.get("/user")).data; // need to encapsulate otherwise you'll be reading the promise result and not the api result data
-                    commit("setUser", user);
-                    commit("setLoggedIn", true);
+                     // need to encapsulate otherwise you'll be reading the promise result and not the api result data
+                    //let user = (await axios.get("/user")).data;
+
+                    await axios
+                            .get("/user")
+                            .then(response => {
+                                commit("setUser", user);
+                                commit("setLoggedIn", true);
+                            })
+                            .catch(error => {
+                                dispatch("logout");
+                            })
+                    
                 } catch(error) {
                     dispatch("logout");
+                } finally {
+                    commit('setIsLoading', false);
                 }
             }
         },
         logout({ commit }) {
+            commit('setIsLoading', true);
             commit("setUser", {});
             commit("setLoggedIn", false);
             logout();
+            commit('setIsLoading', false);
         }
 	},
     getters: {

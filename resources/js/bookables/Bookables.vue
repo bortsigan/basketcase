@@ -49,7 +49,10 @@
         ></a>
       </div>
     </div>
-    <div class="row mb-4" v-for="row in rows" :key="'row' + row">
+    
+    <!-- list !-->
+    <preloader v-if="loading"/>
+    <div class="row mb-4" v-for="row in rows" :key="'row' + row" v-else>
       <!-- if no key reference, use (key, value) as replacement !-->
       <div
         class="col"
@@ -119,11 +122,8 @@ export default {
         prev: null,
         next: null,
       },
+      isLoading: false
     };
-    // return {
-    //     bookable1: null,
-    //     bookable2: null
-    // }
   },
   computed: {
     rows() {
@@ -162,9 +162,16 @@ export default {
               ? `${links.next}&search=${this.search}`
               : links.next
             : "";
+
+            console.log(this.loading);
         })
         .catch((error) => {
           console.error("Something went wrong in getting bookables data.");
+        })
+        .finally(() => {
+          this.loading = false;
+
+          console.warn(this.loading);
         });
     },
     searchBookables(event) {
