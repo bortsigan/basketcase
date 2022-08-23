@@ -209,10 +209,7 @@ export default {
     },
     hasBookingErrors() {
       return this.errors && typeof this.errors.bookings !== "undefined";
-    },
-    calculada(from, to) {
-      return "hey";
-    },
+    }
   },
   methods: {
     async validateCheckout() {
@@ -234,7 +231,6 @@ export default {
       } catch (error) {
         this.errors = error.response && error.response.data.errors; // this.errors is from mixins validation errors
       } finally {
-        //this.isBooked = this.errors ? false : true;
         this.loading = false;
       }
     },

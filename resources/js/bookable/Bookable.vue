@@ -96,7 +96,7 @@ export default {
     }),
     inBasketAlready() {
       // should be a state since we're mapping a state from the vuex
-      if (this.bookable == null) {
+      if (!this.bookable) {
         return false;
       }
 

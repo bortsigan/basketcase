@@ -16,18 +16,11 @@
 <script>
 
 export default {
-    // props: [
-    //     "itemTitle", "itemContent", "itemPrice"
-    // ],
-
     props: {
         id: Number,
         title : String,
         description : String,
         price : Number
-    },
-    mounted() {
-        // console.log(this.title, this.description, this.price);
     }
 }
 </script>

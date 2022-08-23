@@ -5,7 +5,6 @@
       <h6 class="text-secondary"><strong>Review List</strong></h6>
       <div class="border-bottom mt-3" v-for="(review, index) in reviews" :key="index">
         <!-- use index for key instead of review !-->
-        <!-- <div class="border-bottom mt-3" v-for="number in 5" :key="number"> random for loop !-->
         <div class="row">
           <div class="col-md-6">Anonymous</div>
           <div class="col-md-6 d-flex justify-content-end">

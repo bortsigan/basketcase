@@ -112,7 +112,6 @@ import { ref, reactive, html } from "vue";
 export default {
   components: { BookableListItem },
   data() {
-    /** this is where you usually declare your variables */
     return {
       bookables: [],
       loading: false,
@@ -162,16 +161,12 @@ export default {
               ? `${links.next}&search=${this.search}`
               : links.next
             : "";
-
-            console.log(this.loading);
         })
         .catch((error) => {
-          console.error("Something went wrong in getting bookables data.");
+          alert("Something went wrong in getting bookables data.");
         })
         .finally(() => {
           this.loading = false;
-
-          console.warn(this.loading);
         });
     },
     searchBookables(event) {
@@ -180,10 +175,9 @@ export default {
       this.getBookables(url);
     },
   },
-  created() {
+  mounted() {
     /* life cycle methods */
     this.getBookables();
   },
-  mounted() {},
 };
 </script>
